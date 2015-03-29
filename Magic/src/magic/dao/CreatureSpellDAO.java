@@ -11,6 +11,7 @@ import magic.cards.CreatureSpell;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 /**
  *
@@ -20,11 +21,11 @@ public class CreatureSpellDAO implements AbstractDao<CreatureSpell>{
 
     @Override
     public void createEntity(CreatureSpell card) {
-        SessionFactory sf = HibernateUtils.getSessionFactory();
-        Session session = sf.openSession();
-        session.beginTransaction();
-        session.save(card);
-        session.getTransaction().commit();
+        Session session = HibernateUtils.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        session.saveOrUpdate(card);
+        tx.commit();
+        session.flush();
         session.close();
     }
 

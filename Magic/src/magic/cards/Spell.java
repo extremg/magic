@@ -5,16 +5,18 @@
  */
 package magic.cards;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  *
  * @author maxime
  */
-public abstract class Spell extends AbstractCard {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Spell extends AbstractCard implements Serializable{
     protected List<Mana> costs = new ArrayList<>();
     protected List<String> effect = new ArrayList<>();
 

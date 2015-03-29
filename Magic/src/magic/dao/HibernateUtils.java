@@ -6,10 +6,12 @@
 package magic.dao;
 
 import net.sf.ehcache.hibernate.HibernateUtil;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 
 /**
  * Hibernate Utility class with a convenient method to get Session Factory
@@ -18,29 +20,28 @@ import org.hibernate.service.ServiceRegistry;
  * @author maxime
  */
 public class HibernateUtils {
-    private static SessionFactory sessionFactory = buildSessionFactory();
- 
-   private static SessionFactory buildSessionFactory() {
-      try {
-         if (sessionFactory == null) {
-            Configuration configuration = new Configuration().configure(HibernateUtil.class.getResource("magic/configuration/hibernate.cfg.xml"));
-            StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
-            serviceRegistryBuilder.applySettings(configuration.getProperties());
-            ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
+    private static SessionFactory sessionFactory;
+    private static ServiceRegistry serviceRegistry;
+
+    static
+    {
+        try
+        {
+//          Configuration configuration = new Configuration();
+            Configuration configuration = new Configuration().configure("magic/configuration/hibernate.cfg.xml");
+
+            serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-         }
-         return sessionFactory;
-      } catch (Throwable ex) {
-         System.err.println("Initial SessionFactory creation failed." + ex);
-         throw new ExceptionInInitializerError(ex);
-      }
-   }
- 
-   public static SessionFactory getSessionFactory() {
-      return sessionFactory;
-   }
- 
-   public static void shutdown() {
-      getSessionFactory().close();
-   }
+        }
+        catch (HibernateException he)
+        {
+            System.err.println("Error creating Session: " + he);
+            throw new ExceptionInInitializerError(he);
+        }
+    }
+
+    public static SessionFactory getSessionFactory()
+    {
+        return sessionFactory;
+    } 
 }

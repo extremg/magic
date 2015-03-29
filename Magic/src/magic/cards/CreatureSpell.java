@@ -6,6 +6,7 @@
 package magic.cards;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,33 +14,35 @@ import java.util.List;
  *
  * @author maxime
  */
-public class CreatureSpell extends Spell {
-    protected int[] power = new int[2];
+public class CreatureSpell extends Spell implements Serializable {
+    protected String power;
+    protected String toughness;
     
     //Constructeur creature
     public CreatureSpell(String name, int[] power, String type, String ssType, List<Mana> costs, String... effects) {
         super.name = name;
-        this.power = power;
+        this.power = String.valueOf(power[0]);
+        this.toughness = String.valueOf(power[1]);
         super.typeCard = type;
         super.ssTypeCard.add(ssType);
         this.costs = costs;
         super.effect.addAll(Arrays.asList(effects));
     }
 
-    public int[] getPower() {
+    public String getPower() {
         return power;
     }
 
-    public void setPower(int[] power) {
-        this.power = power;
+    public void setPower(int power) {
+        this.power = String.valueOf(power);
     }
 
-    protected String powerToString() {
-        return this.power[0]+"|"+this.power[1];
+    protected String ptToString() {
+        return this.power+"|"+this.toughness;
     }
     
     @Override
     public String toString() {
-        return "Instanciation de la carte [ "+this.name+", "+this.costManaToString()+" "+this.typeCard+" : "+this.ssTypeCard+" "+this.powerToString()+" ]";
+        return "Instanciation de la carte [ "+this.name+", "+this.costManaToString()+" "+this.typeCard+" : "+this.ssTypeCard+" "+this.ptToString()+" ]";
     }
 }
